@@ -69,6 +69,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated, IsProjectOwner]
+    queryset = Project.objects.all()
 
     # Only show projects the user owns or is a member of
     def get_queryset(self):

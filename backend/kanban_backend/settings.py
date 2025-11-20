@@ -6,10 +6,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent  # Project base directory
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'fallback-secret-key')  # Secret key
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'  # Debug mode
+DJANGO_DEBUG=False
 
 ALLOWED_HOSTS = [
     'localhost',
-    'kanban-app-casf.onrender.com', 'localhost', '127.0.0.1'
+    'kanban-app-casf.onrender.com', 'localhost', '127.0.0.1',
     '127.0.0.1',
 ]
 
@@ -82,6 +83,8 @@ DATABASES = {
         "PASSWORD": "XG56ckYOHiHQWuKQ",  # Password
         "HOST": "db.mklnflltxfamwnpcdfut.supabase.co",  # Host
         "PORT": "5432",  # Port
+        "OPTIONS": {"sslmode": "require"},  # SSL mode
+        
     }
 }
 
@@ -105,5 +108,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://kanban-app-casf.onrender.com",
 ]
 CORS_ALLOW_CREDENTIALS = True
