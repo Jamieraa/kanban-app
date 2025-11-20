@@ -47,6 +47,7 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -100,8 +101,14 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+STATIC_URL = '/static/'
+
+# Point Django to the frontend build files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'frontend', 'dist', 'assets'),  # React assets
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

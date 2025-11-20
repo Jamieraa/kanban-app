@@ -1,4 +1,7 @@
 from rest_framework import viewsets, status, filters
+import os
+from django.http import HttpResponse
+from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -16,8 +19,7 @@ from .permissions import (
 from django.shortcuts import render
 from django.http import HttpResponse
 
-def home(request):
-    return HttpResponse("Welcome to the Kanban App!")
+
 
 
 User = get_user_model()
@@ -130,3 +132,15 @@ class NotificationViewSet(viewsets.ModelViewSet):
 @permission_classes([AllowAny])
 def test_connection(request):
     return Response({"detail": "API is reachable"})
+
+def frontend(request):
+    """
+    Serve the React frontend's index.html.
+    """
+    try:
+        with open(os.path.join(settings.BASE_DIR, 'frontend', 'dist', 'index.html')) as f:
+            return HttpResponse(f.read())
+    except FileNotFoundError:
+        return HttpResponse(
+            "Frontend not built yet. Run `npm run build`", status=501
+        )
