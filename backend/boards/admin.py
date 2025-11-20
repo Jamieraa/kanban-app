@@ -1,16 +1,16 @@
-from django.contrib import admin  # Import admin module
-from .models import Project, Column, Task, Comment, Notification  # Import models
+from django.contrib import admin
+from .models import Project, Column, Task, Comment, Notification
 
 # Register models to appear in Django admin
-admin.site.register(Project)  # Project model
-admin.site.register(Column)   # Column model
-admin.site.register(Task)     # Task model
-admin.site.register(Comment)  # Comment model
-admin.site.register(Notification)  # Notification model
+admin.site.register(Project)
+admin.site.register(Column)
+admin.site.register(Comment)
+admin.site.register(Notification)
 
 # Customize Task display in admin
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('title', 'column', 'due', 'assigned')  # Columns to display in list
-    list_filter = ('column', 'due')                         # Filters available in sidebar
-    search_fields = ('title', 'description', 'assigned')   # Fields searchable in admin
+    list_display = ('title', 'column', 'due', 'assigned')
+    list_filter = ('column', 'due')
+    search_fields = ('title', 'description', 'assigned')
+    ordering = ('due',)
