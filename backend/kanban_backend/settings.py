@@ -9,6 +9,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'  # Debug mode
 
 ALLOWED_HOSTS = [
     'localhost',
+    'kanban-app-casf.onrender.com', 'localhost', '127.0.0.1'
     '127.0.0.1',
 ]
 

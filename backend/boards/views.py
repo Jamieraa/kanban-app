@@ -13,6 +13,12 @@ from .permissions import (
     IsProjectMemberOrOwner, IsProjectOwner,
     IsCommentAuthorOrProjectMember, IsNotificationUser
 )
+from django.shortcuts import render
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Welcome to the Kanban App!")
+
 
 User = get_user_model()  # get the active user model
 
