@@ -1,7 +1,7 @@
 from django.urls import include, path  # Django URL handling
 from rest_framework.routers import DefaultRouter  # DRF router for viewsets
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView  # JWT auth views
-
+from .views import test_connection  # Test connection view
 # Import viewsets and auth endpoints
 from .views import (
     ProjectViewSet,      # CRUD API for projects
@@ -33,5 +33,6 @@ urlpatterns = [
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWT login
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),      # JWT refresh token
     path('auth/logout/', logout_view, name='auth_logout'),  # Logout endpoint
+    path('test-connection/', test_connection, name='test_connection'),  # Test connection endpoint
 ]
 
