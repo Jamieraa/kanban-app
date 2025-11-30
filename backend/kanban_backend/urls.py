@@ -1,6 +1,6 @@
 from django.contrib import admin  #django admin site
 from django.urls import include, path, re_path  #URL handling
-from boards.views import frontend  #import frontend view from boards app
+from backend.boards.views import frontend  #import frontend view from boards app
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView  # JWT authentication views
 
 urlpatterns = [
