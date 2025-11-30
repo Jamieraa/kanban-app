@@ -118,7 +118,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles" 
 
 STATICFILES_DIRS = [
-    BASE_DIR / "frontend" / "dist",     
+    BASE_DIR / 'build',
 ]
 
 
@@ -130,7 +130,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "frontend" / "dist"],  
+        "DIRS": [BASE_DIR / 'build'], 
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
