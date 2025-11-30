@@ -1,1 +1,1 @@
-web: gunicorn backend.kanban_backend.wsgi:application
+web: gweb: gunicorn --chdir backend kanban_backend.wsgi:application
