@@ -1,1 +1,1 @@
-web: gweb: gunicorn --chdir backend kanban_backend.wsgi:application
+web: PYTHONPATH=. gunicorn backend.kanban_backend.wsgi:application
