@@ -9,7 +9,7 @@ import os
 from django.core.wsgi import get_wsgi_application
 
 # Set the default settings module for the 'kanban_backend' project
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'kanban_backend.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.kanban_backend.settings')
 
 # Create the WSGI application callable for Gunicorn
 application = get_wsgi_application()
