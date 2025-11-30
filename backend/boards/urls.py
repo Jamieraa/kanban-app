@@ -1,5 +1,5 @@
 from django.urls import path, re_path, include
-from .views import frontend  # Django URL handling
+# from .views import frontend  # Django URL handling
 from rest_framework.routers import DefaultRouter  # DRF router for viewsets
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView  # JWT auth views
 from .views import test_connection  # Test connection view
@@ -11,7 +11,9 @@ from .views import (
     CommentViewSet,      # CRUD API for comments
     NotificationViewSet, # CRUD API for notifications
     register,            # user registration endpoint
-    logout_view          # user logout endpoint
+    logout_view,          # user logout endpoint
+    frontend,              # React frontend view
+    test_connection        # Test connection view
 )
 
 
@@ -34,9 +36,8 @@ urlpatterns = [
     path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWT login
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),      # JWT refresh token
     path('auth/logout/', logout_view, name='auth_logout'),  # Logout endpoint
-     path('api/', include('boards.urls')),  # your existing API routes
-    # Catch-all route for React
-    re_path(r'^.*$', frontend),
     path('test-connection/', test_connection, name='test_connection'),  # Test connection endpoint
+    re_path(r'^.*$', frontend),
+    
 ]
 

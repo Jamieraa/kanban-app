@@ -1,26 +1,12 @@
-"""
-URL configuration for kanban_backend project.
-
-The `urlpatterns` list routes URLs to views.
-"""
-
-# ----------------------------
-# Import statements
-# ----------------------------
-from django.contrib import admin  # Django admin site
-from django.urls import include, path  # URL handling
-from boards import views  # Import views from boards app
-from .views import frontend  # Import frontend view
+from django.contrib import admin  #django admin site
+from django.urls import include, path, re_path  #URL handling
+from boards.views import frontend  #import frontend view from boards app
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView  # JWT authentication views
 
-# ----------------------------
-# Global URL patterns
-# ----------------------------
 urlpatterns = [
-     path('', frontend, name='frontend'),
-    path('admin/', admin.site.urls),  # Admin panel
-    path('api/', include('boards.urls')),  # Include all API routes from boards app under /api/
-    path('api/test/', views.test_connection),  # Simple endpoint to test API connectivity
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWT login (returns access + refresh tokens)
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT access token
+    path('admin/', admin.site.urls),  #admin panel
+    path('api/', include('boards.urls')),  #include all API routes from boards app under /api/
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  #JWT login (returns access + refresh tokens)
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  #refresh JWT access token
+    re_path(r'^(?!api/).*$', frontend, name='frontend'),  #catch-all route for frontend (excluding /api/)
 ]
