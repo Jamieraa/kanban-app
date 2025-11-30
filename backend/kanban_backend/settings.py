@@ -58,9 +58,9 @@ MIDDLEWARE = [
 # ---------------------------------------------------------
 # Url configuration
 # ---------------------------------------------------------
-ROOT_URLCONF = "kanban_backend.urls"
+ROOT_URLCONF = "backend.kanban_backend.urls"
 
-WSGI_APPLICATION = "kanban_backend.wsgi.application"
+WSGI_APPLICATION = "backend.kanban_backend.wsgi.application"
 
 # ---------------------------------------------------------
 # Database
