@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "whitenoise",
 
     # Local
-    "boards",
+    "backend.boards",
 ]
 
 # ---------------------------------------------------------
@@ -45,9 +45,9 @@ INSTALLED_APPS = [
 # ---------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",   # REQUIRED FOR RENDER STATIC FILES
+    "whitenoise.middleware.WhiteNoiseMiddleware",   
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",        # REQUIRED FOR FRONTEND ACCESS
+    "corsheaders.middleware.CorsMiddleware",        
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -105,8 +105,8 @@ SIMPLE_JWT = {
 # Cors settings
 # ---------------------------------------------------------
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",     # Vite dev server
-    "http://localhost:3000",     # React dev server
+    "http://localhost:5173",     
+    "http://localhost:3000",     
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -115,14 +115,13 @@ CORS_ALLOW_CREDENTIALS = True
 # Static files
 # ---------------------------------------------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Render collects here
+STATIC_ROOT = BASE_DIR / "staticfiles" 
 
-# Serve React build folder
 STATICFILES_DIRS = [
-    BASE_DIR / "frontend" / "dist",     # Vite or React build output
+    BASE_DIR / "frontend" / "dist",     
 ]
 
-# Required for Whitenoise to compress & serve files fast
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ---------------------------------------------------------
@@ -131,7 +130,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "frontend" / "dist"],  # Serve React index.html
+        "DIRS": [BASE_DIR / "frontend" / "dist"],  
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
