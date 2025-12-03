@@ -1,4 +1,3 @@
-from os
 from django.contrib import admin  #django admin site
 from django.urls import include, path, re_path  #URL handling
 from django.views.generic import TemplateView  #generic view for serving templates
