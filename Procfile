@@ -1,1 +1,1 @@
-web: bash -c "source .venv/bin/activate && gunicorn backend.kanban_backend.wsgi:application"
+web: PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:.venv/bin:$PATH gunicorn backend.kanban_backend.wsgi:application
