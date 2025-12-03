@@ -1,3 +1,5 @@
+set -e # Exit immediately if a command exits with a non-zero status.
+
 echo "--- 1. Building React Frontend ---"
 #go to the frontend directory, install dependencies, and build.
 cd frontend
