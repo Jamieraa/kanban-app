@@ -8,6 +8,7 @@ npm run build
 cd .. #return to project root (src/)
 
 echo "--- 2. Running Django Collectstatic with Explicit Pathing ---"
+pip install -r requirements.txt
 #set the PYTHONPATH to include the src directory and run collectstatic
-.venv/bin/python backend/manage.py collectstatic --noinput
+python backend/manage.py collectstatic --noinput
 echo "--- Build complete! Static files collected. ---"
