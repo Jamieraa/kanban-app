@@ -7,6 +7,5 @@ cd .. #return to project root (src/)
 
 echo "--- 2. Running Django Collectstatic with Explicit Pathing ---"
 #set the PYTHONPATH to include the src directory and run collectstatic
-PYTHONPATH=/opt/render/project/src .venv/bin/python backend/manage.py collectstatic --noinput
-
+.venv/bin/python backend/manage.py collectstatic --noinput
 echo "--- Build complete! Static files collected. ---"
