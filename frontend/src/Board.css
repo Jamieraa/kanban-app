@@ -1,15 +1,306 @@
-.board {
+/* PAGE BACKGROUND + LAYOUT */
+
+.board-page {
+  min-height: 100vh;
+  background: #111318;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #f5f5f5;
+  position: relative; /* <-- added so logout can be positioned */
+}
+
+.board-wrapper {
+  display: flex;
+  gap: 24px;
+  max-width: 1150px;
+  width: 100%;
+}
+
+/* MAIN BOARD */
+
+.board-main {
+  flex: 3;
+  background: #181a1f;
+  border-radius: 16px;
+  padding: 24px 28px 28px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.45);
+}
+
+.board-header h1 {
+  font-size: 1.6rem;
+  margin: 0 0 4px;
+}
+
+.board-header p {
+  margin: 0 0 20px;
+  color: #c2c5cd;
+  font-size: 0.95rem;
+}
+
+/* TOP INPUT ROW */
+
+.task-input-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.top-input {
+  background: #26272b;
+  border-radius: 8px;
+  border: 1px solid #383a40;
+  padding: 10px 12px;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+}
+
+.top-input::placeholder {
+  color: #8b8d94;
+}
+
+.add-btn {
+  padding: 0 20px;
+  border-radius: 8px;
+  border: none;
+  background: #0d66ff;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.add-btn:hover {
+  opacity: 0.9;
+}
+
+/* COLUMNS */
+
+.columns-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.task-column {
+  background: #202226;
+  border-radius: 12px;
+  padding: 18px 16px;
+  min-height: 260px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.column-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.empty-column {
+  color: #7a7d86;
+  font-size: 0.9rem;
+}
+
+/* TASK CARD */
+
+.task-card {
+  background: #2a2b30;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
+}
+
+.task-title {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.task-input,
+.comment-input {
+  width: 100%;
+  background: #3a3b40;
+  color: #ffffff;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #4b4d54;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.task-input::placeholder,
+.comment-input::placeholder {
+  color: #b7bac4;
+}
+
+.task-info {
+  color: #d5d5d5;
+  font-size: 0.9rem;
+  margin: 2px 0;
+}
+
+.comments-section {
+  margin-top: 10px;
+}
+
+.comment-item {
+  color: #cfcfcf;
+  font-size: 0.85rem;
+  margin: 4px 0;
+}
+
+.comment-btn {
+  background: #3d7bff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 5px;
+  color: #ffffff;
+  font-size: 0.85rem;
+}
+
+/* TASK ACTIONS */
+
+.task-actions {
+  margin-top: 12px;
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-  margin-top: 20px;
 }
 
-.column {
+.edit-btn,
+.save-btn {
+  background: #3d7bff;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 0.85rem;
+}
+
+.delete-btn {
+  background: #cc3333;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 0.85rem;
+}
+
+/* NOTIFICATIONS PANEL */
+
+.notifications-panel {
+  flex: 1.2;
+  background: #181a1f;
+  border-radius: 16px;
+  padding: 20px 18px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+}
+
+.notifications-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.notifications-header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.notification-badge {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #d9363e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.notifications-list {
   flex: 1;
-  background: #f5f5f5;
-  padding: 15px;
-  border-radius: 8px;
-  min-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
+.notification-card {
+  background: #202226;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.notification-title {
+  font-size: 0.95rem;
+  margin: 0 0 4px;
+}
+
+.notification-time {
+  font-size: 0.8rem;
+  color: #a0a3ac;
+  margin: 0 0 8px;
+}
+
+.notification-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-placeholder {
+  flex: 1;
+  height: 28px;
+  border-radius: 6px;
+  background: #3a3b40;
+  margin-right: 8px;
+}
+
+.mark-read-btn {
+  background: #0d66ff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 0.85rem;
+}
+
+/* LOGOUT BUTTON */
+
+.logout-btn {
+  position: absolute;
+  top: 24px;
+  right: 40px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #0d66ff;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.logout-btn:hover,
+.mark-read-btn:hover,
+.comment-btn:hover,
+.edit-btn:hover,
+.save-btn:hover,
+.delete-btn:hover {
+  opacity: 0.9;
+}
