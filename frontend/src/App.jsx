@@ -19,8 +19,11 @@ export default function App() {
   const [user, setUser] = useState(() => loadUser());
 
   useEffect(() => {
-    if (user) localStorage.setItem("user", JSON.stringify(user));
-    else localStorage.removeItem("user");
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
   }, [user]);
 
   return (
@@ -35,17 +38,31 @@ export default function App() {
         {/* projects (protected) */}
         <Route
           path="/projects"
-          element={user ? <ProjectSelection user={user} /> : <Navigate to="/" replace />}
+          element={
+            user ? <ProjectSelection user={user} /> : <Navigate to="/" replace />
+          }
         />
 
         {/* board per project (protected) */}
         <Route
           path="/board/:projectId"
-          element={user ? <Board user={user} /> : <Navigate to="/" replace />}
+          element={
+            user ? (
+              <Board
+                user={user}
+                onLogout={() => setUser(null)}
+              />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
         />
 
         {/* fallback */}
-        <Route path="*" element={<Navigate to={user ? "/projects" : "/"} replace />} />
+        <Route
+          path="*"
+          element={<Navigate to={user ? "/projects" : "/"} replace />}
+        />
       </Routes>
     </Router>
   );
