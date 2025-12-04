@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-
-/**
- * Projects are stored in localStorage under "projects" as array:
- * { id: "p-1", name: "Project 1", tasks: [...], notifications: [...] }
- */
+import "./ProjectSelection.css"; // ← clean CSS file
 
 function makeId() {
   return "p-" + Math.random().toString(36).slice(2, 9);
@@ -36,12 +32,14 @@ export default function ProjectSelection({ user }) {
   };
 
   const createProject = () => {
-    const name = prompt("New project name");
+    const name = prompt("New project name:");
     if (!name) return;
+
     const id = makeId();
     const newProj = { id, name, tasks: [], notifications: [] };
     const updated = [...projects, newProj];
     saveProjects(updated);
+
     toast.success("Project created");
   };
 
@@ -55,6 +53,7 @@ export default function ProjectSelection({ user }) {
   const renameProject = (id) => {
     const newName = prompt("Enter new project name:");
     if (!newName) return;
+
     const updated = projects.map((p) =>
       p.id === id ? { ...p, name: newName } : p
     );
@@ -63,108 +62,63 @@ export default function ProjectSelection({ user }) {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#222", color: "white", padding: 24 }}>
+    <div className="project-page">
       <ToastContainer position="top-right" autoClose={2500} />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>
-          Welcome, {user.username} ({user.role})
+
+      {/* Top bar */}
+      <div className="project-topbar">
+        <div className="project-topbar-left"></div>
+
+        <h1 className="project-title">
+          Welcome, {user.username}
         </h1>
-        <div>
+
+        <div className="project-topbar-right">
           <button
             onClick={() => {
               localStorage.removeItem("user");
               navigate("/");
             }}
-            style={{
-              padding: "8px 12px",
-              background: "#0af",
-              color: "white",
-              border: "none",
-              borderRadius: 6,
-            }}
+            className="logout-btn"
           >
             Logout
           </button>
         </div>
       </div>
 
-      <h2 style={{ marginTop: 24 }}>Select a Project</h2>
-      <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
+      <div className="project-centered">
+        <div className="welcome-text">Your Projects</div>
+        <div className="select-text">Select or create a project</div>
+      </div>
+
+      {/* Project Grid */}
+      <div className="project-grid">
         {projects.map((p) => (
-          <div
-            key={p.id}
-            style={{
-              background: "#333",
-              padding: 12,
-              borderRadius: 8,
-              minWidth: 160,
-              position: "relative",
-            }}
-          >
-            <div style={{ fontWeight: "bold" }}>{p.name}</div>
-            <div style={{ marginTop: 8, display: "flex", gap: 6, flexWrap: "wrap" }}>
-              <button
-                onClick={() => openProject(p)}
-                style={{
-                  padding: "6px 10px",
-                  background: "#0af",
-                  color: "white",
-                  border: "none",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                }}
-              >
+          <div key={p.id} className="project-card">
+            <div className="project-name">{p.name}</div>
+
+            <div className="project-buttons">
+              <button onClick={() => openProject(p)} className="btn blue">
                 Open
               </button>
 
-              <button
-                onClick={() => renameProject(p.id)}
-                style={{
-                  padding: "6px 10px",
-                  background: "#fa0",
-                  color: "white",
-                  border: "none",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                }}
-              >
-                ✏️ Edit
+              <button onClick={() => renameProject(p.id)} className="btn orange">
+                Edit
               </button>
 
-              <button
-                onClick={() => deleteProject(p.id)}
-                style={{
-                  padding: "6px 10px",
-                  background: "#d33",
-                  color: "white",
-                  border: "none",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                }}
-              >
-                🗑️ Delete
+              <button onClick={() => deleteProject(p.id)} className="btn red">
+                Delete
               </button>
             </div>
           </div>
         ))}
 
-        <div style={{ background: "#333", padding: 12, borderRadius: 8, minWidth: 160 }}>
-          <div style={{ fontWeight: "bold" }}>Create New Project</div>
-          <div style={{ marginTop: 8 }}>
-            <button
-              onClick={createProject}
-              style={{
-                padding: "6px 10px",
-                background: "#0af",
-                color: "white",
-                border: "none",
-                borderRadius: 6,
-                cursor: "pointer",
-              }}
-            >
-              Create
-            </button>
-          </div>
+        {/* Create new card */}
+        <div className="project-card create-card">
+          <div className="project-name">Create New Project</div>
+          <button onClick={createProject} className="btn blue">
+            Create
+          </button>
         </div>
       </div>
     </div>
