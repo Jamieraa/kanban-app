@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import "../Board.css";
 
@@ -113,3 +112,4 @@ export default function Task({
     </div>
   );
 }
+
