@@ -1,12 +1,13 @@
 // src/components/TaskColumn.jsx
 import React from "react";
 import Task from "./Task";
-import "../Board.css"; // optional: or make TaskColumn.css if you want
+import "../Board.css";
 
-function TaskColumn({ title, tasks, role, onDeleteTask, onEditTask }) {
+function TaskColumn({ title, tasks, role, deleteTask, updateTask, changeTaskStatus }) {
   return (
     <div className="task-column">
       <h3>{title}</h3>
+
       {tasks.length === 0 ? (
         <p className="empty-column">No tasks</p>
       ) : (
@@ -15,8 +16,9 @@ function TaskColumn({ title, tasks, role, onDeleteTask, onEditTask }) {
             key={task.id}
             task={task}
             role={role}
-            onDeleteTask={onDeleteTask}
-            onEditTask={onEditTask}
+            deleteTask={deleteTask}
+            updateTask={updateTask}
+            changeTaskStatus={changeTaskStatus}
           />
         ))
       )}
