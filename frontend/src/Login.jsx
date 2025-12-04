@@ -1,140 +1,74 @@
-//Signup.jsx
 import React, { useState } from "react";
+import "./Login.css";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
 
-
-export default function Signup({ setUser }) {
+export default function Login({ setUser }) {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-
-  const handleSignup = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
 
+    console.log("Login clicked");
 
-    // basic validation
-    if (!username.trim() || !email.trim() || !password.trim()) {
-      toast.error("All fields are required");
-      return;
-    }
+    // TEMP: mock login so you can move to next page
+    const fakeUser = {
+      username: username || "testuser",
+      id: "12345",
+    };
 
-
-    // get existing users from localStorage
-    const usersRaw = localStorage.getItem("users");
-    const users = usersRaw ? JSON.parse(usersRaw) : [];
-
-
-    // check if username already exists
-    if (users.some((u) => u.username === username)) {
-      toast.error("Username already exists");
-      return;
-    }
-
-
-    // create new user
-    const newUser = { username, email, password };
-    users.push(newUser);
-    localStorage.setItem("users", JSON.stringify(users));
-
-
-    // auto-login after signup
-    setUser({ username, email, role: "member" });
-    toast.success("Account created successfully!");
-    navigate("/projects");
+    setUser(fakeUser);         // store user
+    navigate("/projects");     // go to next page
   };
 
-
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#222",
-        color: "white",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 20,
-      }}
-    >
-      <ToastContainer position="top-right" autoClose={2500} />
-      <form
-        onSubmit={handleSignup}
-        style={{
-          width: 360,
-          background: "#333",
-          padding: 20,
-          borderRadius: 8,
-        }}
-      >
-        <h2 style={{ marginTop: 0 }}>Create Account</h2>
+    <div className="login-page">
+      <h1 className="login-title">SmartTask Tool</h1>
+      <p className="login-subtitle">Collaborate. Track. Achieve.</p>
 
-
-        <label style={{ display: "block", marginBottom: 8 }}>
-          Username
+      <div className="login-card">
+        <form onSubmit={handleLogin}>
+          <label>Username</label>
           <input
+            type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            style={{ width: "100%", padding: 8, marginTop: 6 }}
+            placeholder="Enter username"
           />
-        </label>
 
-
-        <label style={{ display: "block", marginBottom: 8 }}>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: 8, marginTop: 6 }}
-          />
-        </label>
-
-
-        <label style={{ display: "block", marginBottom: 8 }}>
-          Password
+          <label>Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: 8, marginTop: 6 }}
+            placeholder="Enter password"
           />
-        </label>
 
+          <button type="submit" className="login-btn">
+            Log In
+          </button>
+        </form>
 
-        <button
-          type="submit"
-          style={{
-            background: "#0af",
-            color: "white",
-            padding: "10px 14px",
-            border: "none",
-            borderRadius: 6,
-            cursor: "pointer",
-            marginTop: 10,
-          }}
-        >
-          Sign Up
-        </button>
-
-
-        <div style={{ marginTop: 12 }}>
+        <p className="signup-text">
+          Don’t have an account?{" "}
           <button
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/signup")}
             style={{
               background: "transparent",
-              color: "#0af",
               border: "none",
+              color: "#4dafff",
               cursor: "pointer",
+              textDecoration: "underline",
+              padding: 0,
             }}
           >
-            Already have an account? Log in
+            Sign up
           </button>
-        </div>
-      </form>
+        </p>
+      </div>
     </div>
   );
 }
+
