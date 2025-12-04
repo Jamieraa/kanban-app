@@ -1,0 +1,110 @@
+
+.project-page {
+  width: 100vw;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, #392042 10%, #0f1113 70%);
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  padding: 28px 36px 60px;
+  box-sizing: border-box;
+}
+
+.project-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.project-topbar-left,
+.project-topbar-right {
+  width: 140px;
+}
+
+.project-title {
+  font-size: 44px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #3ca2ff, #a066ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin: 0;
+}
+
+.logout-btn {
+  padding: 10px 16px;
+  background: #2f9cff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.project-centered {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.welcome-text {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.select-text {
+  font-size: 22px;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+.project-grid {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.project-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  padding: 24px;
+  width: 260px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.project-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.project-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+}
+
+.blue {
+  background: linear-gradient(90deg, #3ca2ff, #4e74ff);
+}
+
+.orange {
+  background: linear-gradient(90deg, #ff9f45, #ffb86b);
+  color: #111;
+}
+
+.red {
+  background: linear-gradient(90deg, #e04b4b, #d9534f);
+}
