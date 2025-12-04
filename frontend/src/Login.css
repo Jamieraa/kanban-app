@@ -1,0 +1,92 @@
+
+/* Full-screen gradient background */
+.login-page {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at top right, #4a1b7f, #0d0f1a);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: "Inter", sans-serif;
+}
+
+/* Title */
+.login-title {
+  font-size: 48px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #3ca2ff, #a066ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 5px;
+}
+
+/* Subtitle */
+.login-subtitle {
+  font-size: 18px;
+  opacity: 0.8;
+  margin-bottom: 40px;
+}
+
+/* Card box */
+.login-card {
+  background: rgba(255, 255, 255, 0.07);
+  padding: 40px;
+  width: 380px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+}
+
+/* Labels */
+.login-card label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Inputs */
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  margin-bottom: 18px;
+  outline: none;
+}
+
+.login-card input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Button */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #3ca2ff, #4e74ff);
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  opacity: 0.9;
+}
+
+/* Signup text */
+.signup-text {
+  text-align: center;
+  margin-top: 15px;
+  opacity: 0.8;
+}
+
+.signup-text a {
+  color: #6cb2ff;
+  cursor: pointer;
+}
