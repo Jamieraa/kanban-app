@@ -1,260 +1,309 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { toast, ToastContainer } from "react-toastify";
-import Notifications from "./Notifications";
+import React, { useState } from "react";
+import "../Board.css";
+import Task from "./Task";
 
-/**
- * Board reads project from localStorage by projectId.
- * It persists changes back to localStorage so each project maintains its own tasks.
- *
- * Data model for a project stored in localStorage `projects`:
- * { id, name, tasks: [ { id, text, status, deadline, assignees: [], comments: [{user,text,timestamp}] } ], notifications: [ { message, timestamp, read } ] }
- */
+const initialColumns = {
+  todo: {
+    key: "todo",
+    title: "To Do",
+    tasks: [],
+  },
+  inProgress: {
+    key: "inProgress",
+    title: "In Progress",
+    tasks: [
+      {
+        id: "example-1",
+        title: "Example Task",
+        deadline: "2025-10-31",
+        assignedTo: "Saviya",
+        comments: [],
+      },
+    ],
+  },
+  done: {
+    key: "done",
+    title: "Done",
+    tasks: [],
+  },
+};
 
-function loadProjects() {
-  try {
-    const raw = localStorage.getItem("projects");
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
+const initialNotifications = [
+  {
+    id: 1,
+    message: "Task moved to In Progress",
+    time: "11/21/2023, 8:42:48 PM",
+    read: false,
+  },
+  {
+    id: 2,
+    message: "Task moved to In Progress",
+    time: "10/21/2025, 12:28:18 PM",
+    read: false,
+  },
+  {
+    id: 3,
+    message: "Task moved to In Progress",
+    time: "16/24/2025, 12:44:06 PM",
+    read: false,
+  },
+];
 
-function saveProjects(projects) {
-  localStorage.setItem("projects", JSON.stringify(projects));
-}
+const columnTitles = {
+  todo: "To Do",
+  inProgress: "In Progress",
+  done: "Done",
+};
 
-function nowString() {
-  return new Date().toLocaleString();
-}
-
-export default function Board({ user }) {
-  const { projectId } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const [project, setProject] = useState(null);
-  const [tasksLoaded, setTasksLoaded] = useState(false);
-
-  // local editing states
-  const [newText, setNewText] = useState("");
+export default function Board({
+  projectName = "Project 1",
+  userName = "admin",
+  role = "owner",
+  onLogout,
+}) {
+  const [columns, setColumns] = useState(initialColumns);
+  const [newTitle, setNewTitle] = useState("");
   const [newDeadline, setNewDeadline] = useState("");
-  const [newAssignees, setNewAssignees] = useState("");
-  const [editing, setEditing] = useState({ id: null, text: "" });
+  const [notifications, setNotifications] = useState(initialNotifications);
 
-  // load project from localStorage on mount or when projectId changes
-  useEffect(() => {
-    const projects = loadProjects();
-    const p = projects.find((x) => x.id === projectId);
-    if (!p) {
-      // safety: if project not found, redirect to projects
-      toast.error("Project not found");
-      navigate("/projects");
-      return;
-    }
-    // ensure tasks and notifications arrays exist
-    p.tasks = Array.isArray(p.tasks) ? p.tasks : [];
-    p.notifications = Array.isArray(p.notifications) ? p.notifications : [];
-    setProject(p);
-    setTasksLoaded(true);
-  }, [projectId]);
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
-  // helper to update project both local state and localStorage
-  const persistProject = (updater) => {
-    const projects = loadProjects();
-    const idx = projects.findIndex((x) => x.id === projectId);
-    if (idx === -1) return;
-    const copy = JSON.parse(JSON.stringify(projects[idx])); // clone
-    updater(copy);
-    projects[idx] = copy;
-    saveProjects(projects);
-    setProject(copy);
-  };
+  // ----------------------------
+  // ADD TASK (goes to "To Do")
+  // ----------------------------
+  const handleAddTask = () => {
+    if (!newTitle.trim()) return;
 
-  // notification helper
-  const pushNotification = (message) => {
-    const timestamp = nowString();
-    persistProject((p) => {
-      p.notifications.unshift({ message, timestamp, read: false });
-    });
-    toast.info(message);
-  };
-
-  // Add new task (owner only)
-  const addTask = () => {
-    if (!newText.trim()) return toast.error("Enter task description");
     const task = {
-      id: "t-" + Date.now(),
-      text: newText.trim(),
-      status: "To Do",
+      id: Date.now().toString(),
+      title: newTitle.trim(),
       deadline: newDeadline || "",
-      assignees: newAssignees ? newAssignees.split(",").map(s => s.trim()).filter(Boolean) : [],
+      assignedTo: "",
       comments: [],
     };
-    persistProject((p) => { p.tasks.push(task); });
-    pushNotification(`Task "${task.text}" created`);
-    setNewText(""); setNewDeadline(""); setNewAssignees("");
+
+    setColumns((prev) => ({
+      ...prev,
+      todo: {
+        ...prev.todo,
+        tasks: [...prev.todo.tasks, task],
+      },
+    }));
+
+    setNewTitle("");
+    setNewDeadline("");
   };
 
-  // Delete (owner only)
-  const deleteTask = (taskId) => {
-    persistProject((p) => { p.tasks = p.tasks.filter((t) => t.id !== taskId); });
-    pushNotification(`Task deleted`);
+  // ----------------------------
+  // DELETE TASK
+  // ----------------------------
+  const handleDeleteTask = (taskId, columnKey) => {
+    setColumns((prev) => ({
+      ...prev,
+      [columnKey]: {
+        ...prev[columnKey],
+        tasks: prev[columnKey].tasks.filter((t) => t.id !== taskId),
+      },
+    }));
   };
 
-  // Start edit
-  const startEdit = (task) => setEditing({ id: task.id, text: task.text });
-
-  const saveEdit = () => {
-    persistProject((p) => {
-      p.tasks = p.tasks.map((t) => t.id === editing.id ? { ...t, text: editing.text } : t);
-    });
-    pushNotification(`Task updated`);
-    setEditing({ id: null, text: "" });
+  // ----------------------------
+  // EDIT TASK
+  // ----------------------------
+  const handleEditTask = (
+    taskId,
+    title,
+    deadline,
+    assignedTo,
+    columnKey
+  ) => {
+    setColumns((prev) => ({
+      ...prev,
+      [columnKey]: {
+        ...prev[columnKey],
+        tasks: prev[columnKey].tasks.map((t) =>
+          t.id === taskId ? { ...t, title, deadline, assignedTo } : t
+        ),
+      },
+    }));
   };
 
-  // Drag & drop handler (updates status)
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const { source, destination, draggableId } = result;
-    persistProject((p) => {
-      const task = p.tasks.find((t) => t.id === draggableId);
-      if (!task) return;
-      // remove from array position
-      // we will keep tasks array as flat list; status controls column placement
-      task.status = destination.droppableId;
-    });
-    pushNotification(`Task moved to ${destination.droppableId}`);
-  };
-
-  // Comments (owner and members can comment)
-  const addComment = (taskId, text) => {
+  // ----------------------------
+  // ADD COMMENT
+  // ----------------------------
+  const handleAddComment = (taskId, text, columnKey) => {
     if (!text.trim()) return;
-    persistProject((p) => {
-      p.tasks = p.tasks.map((t) => t.id === taskId ? { ...t, comments: [...t.comments, { user: user.username, text: text.trim(), timestamp: nowString() }] } : t);
-    });
-    pushNotification(`Comment added`);
+    setColumns((prev) => ({
+      ...prev,
+      [columnKey]: {
+        ...prev[columnKey],
+        tasks: prev[columnKey].tasks.map((t) =>
+          t.id === taskId
+            ? { ...t, comments: [...(t.comments || []), text] }
+            : t
+        ),
+      },
+    }));
   };
 
-  // mark notification read
-  const markNotificationRead = (index) => {
-    persistProject((p) => {
-      if (p.notifications[index]) p.notifications[index].read = true;
+  // ----------------------------
+  // DRAG & DROP
+  // ----------------------------
+  const handleDragOver = (e) => e.preventDefault();
+
+  const handleDrop = (e, toColumnKey) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData("taskId");
+    const fromColumnKey = e.dataTransfer.getData("fromColumn");
+
+    if (!taskId || !fromColumnKey || fromColumnKey === toColumnKey) return;
+
+    setColumns((prev) => {
+      const fromTasks = [...prev[fromColumnKey].tasks];
+      const taskIndex = fromTasks.findIndex(
+        (t) => String(t.id) === String(taskId)
+      );
+      if (taskIndex === -1) return prev;
+
+      const [movedTask] = fromTasks.splice(taskIndex, 1);
+      const toTasks = [...prev[toColumnKey].tasks, movedTask];
+
+      return {
+        ...prev,
+        [fromColumnKey]: { ...prev[fromColumnKey], tasks: fromTasks },
+        [toColumnKey]: { ...prev[toColumnKey], tasks: toTasks },
+      };
     });
-    // refresh project state
-    const projects = loadProjects();
-    setProject(projects.find((x) => x.id === projectId));
+
+    // Add notification
+    setNotifications((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        message: `Task moved to ${columnTitles[toColumnKey]}`,
+        time: new Date().toLocaleString(),
+        read: false,
+      },
+    ]);
   };
 
-  if (!tasksLoaded) {
-    return <div style={{ padding: 24, color: "white", background: "#222", minHeight: "100vh" }}>Loading...</div>;
-  }
+  // ----------------------------
+  // NOTIFICATIONS
+  // ----------------------------
+  const handleMarkRead = (id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
+  };
 
-  // safety
-  const tasks = project?.tasks || [];
-  const notifications = project?.notifications || [];
-
-  // columns are based on status strings
-  const columns = [
-    { id: "To Do", title: "To Do" },
-    { id: "In Progress", title: "In Progress" },
-    { id: "Done", title: "Done" },
-  ];
+  const handleLogoutClick = () => {
+    if (onLogout) {
+      onLogout();
+    } else {
+      console.log("Logout clicked");
+    }
+  };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#222", color: "white", padding: 20 }}>
-      <ToastContainer position="top-right" autoClose={3000} />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div>
-          <h1 style={{ margin: 0 }}>{project.name}</h1>
-          <div style={{ color: "#aaa", fontSize: 13 }}>Welcome, {user.username} ({user.role})</div>
-        </div>
+    <div className="board-page">
+      {/* TOP-RIGHT LOGOUT BUTTON */}
+      <button className="logout-btn" onClick={handleLogoutClick}>
+        Logout
+      </button>
 
-        <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-          <Notifications notifications={notifications} markRead={markNotificationRead} />
-          <button onClick={() => { localStorage.removeItem("user"); window.location.href = "/"; }} style={{ padding: "8px 12px", background: "#0af", color: "white", border: "none", borderRadius: 6 }}>Logout</button>
-        </div>
-      </div>
+      <div className="board-wrapper">
+        {/* MAIN BOARD */}
+        <div className="board-main">
+          <div className="board-header">
+            <h1>{projectName}</h1>
+            <p>
+              Welcome, {userName} ({role})
+            </p>
+          </div>
 
-      <div style={{ marginTop: 16, display: "flex", gap: 24 }}>
-        {/* Left: board */}
-        <div style={{ flex: 1 }}>
-          {/* Add new task area (owner only) */}
-          {user.role === "owner" && (
-            <div style={{ background: "#333", padding: 12, borderRadius: 8 }}>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input value={newText} onChange={(e) => setNewText(e.target.value)} placeholder="Task description" style={{ flex: 1, padding: 8 }} />
-                <input type="date" value={newDeadline} onChange={(e) => setNewDeadline(e.target.value)} style={{ padding: 8 }} />
-                <input value={newAssignees} onChange={(e) => setNewAssignees(e.target.value)} placeholder="Assignees (comma)" style={{ width: 160, padding: 8 }} />
-                <button onClick={addTask} style={{ padding: "8px 12px", background: "#0af", color: "white", border: "none", borderRadius: 6 }}>Add</button>
+          {/* INPUT ROW */}
+          <div className="task-input-row">
+            <input
+              className="top-input"
+              placeholder="Task description"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+            />
+            <input
+              className="top-input"
+              type="date"
+              value={newDeadline}
+              onChange={(e) => setNewDeadline(e.target.value)}
+              placeholder="mm / dd / yyyy"
+            />
+            <button className="add-btn" onClick={handleAddTask}>
+              Add
+            </button>
+          </div>
+
+          {/* COLUMNS */}
+          <div className="columns-row">
+            {["todo", "inProgress", "done"].map((key) => (
+              <div
+                key={key}
+                className="task-column"
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, key)}
+              >
+                <h3 className="column-title">{columns[key].title}</h3>
+
+                {columns[key].tasks.length === 0 ? (
+                  <p className="empty-column"></p>
+                ) : (
+                  columns[key].tasks.map((task) => (
+                    <Task
+                      key={task.id}
+                      task={task}
+                      column={key}
+                      onDelete={(id) => handleDeleteTask(id, key)}
+                      onEdit={(id, title, deadline, assignedTo) =>
+                        handleEditTask(id, title, deadline, assignedTo, key)
+                      }
+                      onComment={(id, text) => handleAddComment(id, text, key)}
+                    />
+                  ))
+                )}
               </div>
-            </div>
-          )}
-
-          <div style={{ marginTop: 16 }}>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-                {columns.map((col) => (
-                  <Droppable droppableId={col.id} key={col.id}>
-                    {(provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps} style={{ background: "#333", padding: 12, borderRadius: 8, minHeight: 300 }}>
-                        <h3 style={{ marginTop: 0 }}>{col.title}</h3>
-
-                        {tasks.filter((t) => t.status === col.id).map((task, index) => (
-                          <Draggable key={task.id} draggableId={task.id} index={index}>
-                            {(prov) => (
-                              <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} style={{ background: "#444", padding: 10, borderRadius: 6, marginBottom: 8, ...prov.draggableProps.style }}>
-                                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                  <div>
-                                    <strong>{task.text}</strong>
-                                    <div style={{ color: "#bbb", fontSize: 12 }}>Deadline: {task.deadline || "None"}</div>
-                                    <div style={{ color: "#bbb", fontSize: 12 }}>Assigned: {task.assignees && task.assignees.length ? task.assignees.join(", ") : "None"}</div>
-                                  </div>
-
-                                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                                    {user.role === "owner" && (
-                                      <>
-                                        <button onClick={() => startEdit(task)} style={{ padding: "6px", background: "#0af", color: "white", border: "none", borderRadius: 6 }}>Edit</button>
-                                        <button onClick={() => deleteTask(task.id)} style={{ padding: "6px", background: "red", color: "white", border: "none", borderRadius: 6 }}>Delete</button>
-                                      </>
-                                    )}
-                                  </div>
-                                </div>
-
-                                {/* comments */}
-                                <div style={{ marginTop: 8 }}>
-                                  <div style={{ fontSize: 13, color: "#ddd" }}><strong>Comments</strong></div>
-                                  {task.comments && task.comments.map((c, i) => (
-                                    <div key={i} style={{ fontSize: 13, color: "#ccc" }}>
-                                      <em>{c.user}</em>: {c.text} <small style={{ color: "#888" }}>({c.timestamp})</small>
-                                    </div>
-                                  ))}
-
-                                  <div style={{ marginTop: 6, display: "flex", gap: 8 }}>
-                                    <input placeholder="Add comment..." style={{ flex: 1, padding: 8 }} onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
-                                        addComment(task.id, e.target.value);
-                                        e.target.value = "";
-                                      }
-                                    }} />
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                ))}
-              </div>
-            </DragDropContext>
+            ))}
           </div>
         </div>
 
+        {/* NOTIFICATIONS PANEL */}
+        <div className="notifications-panel">
+          <div className="notifications-header">
+            <h2>Notifications</h2>
+            {unreadCount > 0 && (
+              <span className="notification-badge">{unreadCount}</span>
+            )}
+          </div>
+
+          <div className="notifications-list">
+            {notifications.length === 0 ? (
+              <p className="empty-notifications">No notifications</p>
+            ) : (
+              notifications.map((n) => (
+                <div key={n.id} className="notification-card">
+                  <p className="notification-title">{n.message}</p>
+                  <p className="notification-time">{n.time}</p>
+                  <div className="notification-footer">
+                    <div className="notification-placeholder" />
+                    <button
+                      className="mark-read-btn"
+                      onClick={() => handleMarkRead(n.id)}
+                    >
+                      Mark read
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
