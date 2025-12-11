@@ -68,32 +68,33 @@ WSGI_APPLICATION = "backend.kanban_backend.wsgi.application"
 if os.environ.get('DATABASE_URL'):
     # *** CRITICAL FIX FOR RENDER IPV6 ISSUE ***
     # If the DATABASE_URL environment variable is present (i.e., on Render),
-    # we manually build the URL using the known, stable IPv4 address
+    # we manually parse the URL and force the use of the known, stable IPv4 address
     # to bypass the failing IPv6 routing during startup.
     IPV4_HOST = "104.248.249.200"
     DB_URL = os.environ.get('DATABASE_URL')
     
-    # Replace the hostname with the IPv4 address in the environment variable string
-    # This prevents the hostname-to-IPv6 lookup failure
-    FIXED_DB_URL = DB_URL.replace("db.mklnflltxfamwnpcdfut.supabase.co", IPV4_HOST)
+    # 1. Parse the original URL into a settings dictionary
+    config = dj_database_url.parse(
+        DB_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True
+    )
 
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=FIXED_DB_URL, # Use the fixed URL with IPv4
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True 
-        )
-    }
+    # 2. Force the HOST to the known stable IPv4 address
+    config['HOST'] = IPV4_HOST
+
+    DATABASES = {'default': config}
 else:
-    # Fallback for local development
+    # Fallback for local development. We can use the hostname here as local environment
+    # likely handles DNS resolution correctly.
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": "postgres",
             "USER": "postgres",
             "PASSWORD": "XG56ckYOHiHQWuKQ",
-            "HOST": "db.mklnflltxfamwnpcdfut.supabase.co", # Use the hostname for local development
+            "HOST": "db.mklnflltxfamwnpcdfut.supabase.co",
             "PORT": "5432",
             "OPTIONS": {
                 "sslmode": "require", 
