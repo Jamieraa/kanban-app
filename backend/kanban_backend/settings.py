@@ -65,19 +65,37 @@ WSGI_APPLICATION = "backend.kanban_backend.wsgi.application"
 # ---------------------------------------------------------
 # Database
 # ---------------------------------------------------------
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "XG56ckYOHiHQWuKQ",
-        "HOST": "db.mklnflltxfamwnpcdfut.supabase.co",
-        "PORT": "5432",
-        "OPTIONS": {
-                "sslmode": "require", 
-            }
+# ---------------------------------------------------------
+# Database (Conditional Configuration)
+# ---------------------------------------------------------
+if os.environ.get('DATABASE_URL'):
+    # Use the standard DATABASE_URL environment variable (e.g., on Render)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_check=True,
+            ssl_require=True # Supabase/Render security requirement
+        )
     }
-}
+else:
+    # Fallback for local development or if env var is missing.
+    # We use the forced IPv4 address to bypass the known IPv6 routing issue
+    # that causes "Network is unreachable" errors.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "postgres",
+            "USER": "postgres",
+            "PASSWORD": "XG56ckYOHiHQWuKQ",
+            "HOST": "104.248.249.200", # FORCED IPv4 ADDRESS
+            "PORT": "5432",
+            "OPTIONS": {
+                "sslmode": "require", # Supabase requirement
+            }
+        }
+    }
+
 
 
 # ---------------------------------------------------------
