@@ -66,10 +66,9 @@ WSGI_APPLICATION = "backend.kanban_backend.wsgi.application"
 # Database
 # ---------------------------------------------------------
 if os.environ.get('DATABASE_URL'):
-    # *** CRITICAL FIX FOR RENDER IPV6 ISSUE ***
-    # If the DATABASE_URL environment variable is present (i.e., on Render),
-    # we manually parse the URL and force the use of the known, stable IPv4 address
-    # to bypass the failing IPv6 routing during startup.
+    # *** CRITICAL FIX FOR RENDER TIMEOUT ISSUE ***
+    # We parse the DATABASE_URL and force the use of the stable IPv4 address (104.248.249.200)
+    # using the 'HOSTADDR' parameter for a low-level, direct IP connection.
     IPV4_HOST = "104.248.249.200"
     DB_URL = os.environ.get('DATABASE_URL')
     
@@ -81,8 +80,12 @@ if os.environ.get('DATABASE_URL'):
         ssl_require=True
     )
 
-    # 2. Force the HOST to the known stable IPv4 address
-    config['HOST'] = IPV4_HOST
+    # 2. Force the connection using HOSTADDR (for a direct IP connection)
+    config['HOSTADDR'] = IPV4_HOST
+    # 3. Remove 'HOST' to ensure only HOSTADDR is used (optional but safer)
+    if 'HOST' in config:
+        del config['HOST']
+
 
     DATABASES = {'default': config}
 else:
@@ -101,7 +104,6 @@ else:
             }
         }
     }
-
 
 
 # ---------------------------------------------------------
