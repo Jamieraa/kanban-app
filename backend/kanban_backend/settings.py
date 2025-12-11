@@ -65,33 +65,38 @@ WSGI_APPLICATION = "backend.kanban_backend.wsgi.application"
 # ---------------------------------------------------------
 # Database
 # ---------------------------------------------------------
-# ---------------------------------------------------------
-# Database (Conditional Configuration)
-# ---------------------------------------------------------
 if os.environ.get('DATABASE_URL'):
-    # Use the standard DATABASE_URL environment variable (e.g., on Render)
+    # *** CRITICAL FIX FOR RENDER IPV6 ISSUE ***
+    # If the DATABASE_URL environment variable is present (i.e., on Render),
+    # we manually build the URL using the known, stable IPv4 address
+    # to bypass the failing IPv6 routing during startup.
+    IPV4_HOST = "104.248.249.200"
+    DB_URL = os.environ.get('DATABASE_URL')
+    
+    # Replace the hostname with the IPv4 address in the environment variable string
+    # This prevents the hostname-to-IPv6 lookup failure
+    FIXED_DB_URL = DB_URL.replace("db.mklnflltxfamwnpcdfut.supabase.co", IPV4_HOST)
+
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
+            default=FIXED_DB_URL, # Use the fixed URL with IPv4
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=True # Supabase/Render security requirement
+            ssl_require=True 
         )
     }
 else:
-    # Fallback for local development or if env var is missing.
-    # We use the forced IPv4 address to bypass the known IPv6 routing issue
-    # that causes "Network is unreachable" errors.
+    # Fallback for local development
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": "postgres",
             "USER": "postgres",
             "PASSWORD": "XG56ckYOHiHQWuKQ",
-            "HOST": "104.248.249.200", # FORCED IPv4 ADDRESS
+            "HOST": "db.mklnflltxfamwnpcdfut.supabase.co", # Use the hostname for local development
             "PORT": "5432",
             "OPTIONS": {
-                "sslmode": "require", # Supabase requirement
+                "sslmode": "require", 
             }
         }
     }
